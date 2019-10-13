@@ -4,4 +4,4 @@
  * 文章的分数等于文章发布时间的时间戳加上票数与常量的乘积，该常量假设为10，即文章分数 = 发布时间 + 票数 * 10
  * 该例子还实现了群组功能，群组可以理解为在定义了某个特性之后，根据该特性选出符合条件的文章作为一个群组，支持根据条件获取群组内的文章
  */
-package com.dhf.redislearning.item.article;
+package com.dhf.redislearning.item._01_article;

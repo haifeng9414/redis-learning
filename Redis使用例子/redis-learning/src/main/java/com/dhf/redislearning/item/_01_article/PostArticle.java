@@ -1,4 +1,4 @@
-package com.dhf.redislearning.item.article;
+package com.dhf.redislearning.item._01_article;
 
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
@@ -6,8 +6,8 @@ import redis.clients.jedis.Jedis;
 import javax.annotation.Resource;
 import java.util.HashMap;
 
-import static com.dhf.redislearning.item.article.ArticleVote.ONE_WEEK_IN_SECOND;
-import static com.dhf.redislearning.item.article.ArticleVote.VOTE_SCORE;
+import static com.dhf.redislearning.item._01_article.ArticleVote.ONE_WEEK_IN_SECOND;
+import static com.dhf.redislearning.item._01_article.ArticleVote.VOTE_SCORE;
 
 /**
  * 发布文章功能

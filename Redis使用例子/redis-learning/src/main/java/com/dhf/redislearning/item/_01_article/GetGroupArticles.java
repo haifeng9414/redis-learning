@@ -1,4 +1,4 @@
-package com.dhf.redislearning.item.article;
+package com.dhf.redislearning.item._01_article;
 
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
