@@ -13,7 +13,7 @@ public class ArticleVote {
     /* 新发布的文章一个星期后不能再投票 */
     final static int ONE_WEEK_IN_SECOND = 7 * 86400;
     /* 投一票文章获得的分数 */
-    final static int VOTE_SCORE = 432;
+    final static int VOTE_SCORE = 10;
 
     @Resource
     private Jedis jedis;
