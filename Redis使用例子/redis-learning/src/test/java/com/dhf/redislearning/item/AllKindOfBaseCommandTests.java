@@ -10,10 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import redis.clients.jedis.Tuple;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -58,14 +55,14 @@ public class AllKindOfBaseCommandTests {
     @Test
     public void list() {
         allKindOfBaseCommand.rpush(KEY, "1", "2", "3");
-        List<String> values = allKindOfBaseCommand.getAllListValue(KEY);
+        List<String> values = allKindOfBaseCommand.lrange(KEY, 0, -1);
         assertEquals(3, values.size());
 
         String indexValue = allKindOfBaseCommand.lindex(KEY, 1);
         assertEquals("2", indexValue);
 
         allKindOfBaseCommand.lpush(KEY, "0");
-        values = allKindOfBaseCommand.getAllListValue(KEY);
+        values = allKindOfBaseCommand.lrange(KEY, 0, -1);
         assertEquals(4, values.size());
         assertEquals(Arrays.toString(new String[]{"0", "1", "2", "3"}), Arrays.toString(values.toArray(new String[0])));
 
@@ -75,7 +72,7 @@ public class AllKindOfBaseCommandTests {
         String lpop = allKindOfBaseCommand.lpop(KEY);
         assertEquals("0", lpop);
 
-        values = allKindOfBaseCommand.getAllListValue(KEY);
+        values = allKindOfBaseCommand.lrange(KEY, 0, -1);
         assertEquals(2, values.size());
     }
 
@@ -111,9 +108,9 @@ public class AllKindOfBaseCommandTests {
      */
     @Test
     public void hash() {
-        allKindOfBaseCommand.hset(KEY, "a", "1");
-        allKindOfBaseCommand.hset(KEY, "b", "2");
-        allKindOfBaseCommand.hset(KEY, "c", "3");
+        allKindOfBaseCommand.hset(KEY, Collections.singletonMap("a", "1"));
+        allKindOfBaseCommand.hset(KEY, Collections.singletonMap("b", "2"));
+        allKindOfBaseCommand.hset(KEY, Collections.singletonMap("c", "3"));
         Map<String, String> values = allKindOfBaseCommand.hgetAll(KEY);
         assertEquals(3, values.size());
 
@@ -133,7 +130,7 @@ public class AllKindOfBaseCommandTests {
         allKindOfBaseCommand.zadd(KEY, 10, "a");
         allKindOfBaseCommand.zadd(KEY, 20, "b");
         allKindOfBaseCommand.zadd(KEY, 30, "c");
-        Set<String> values = allKindOfBaseCommand.getAllZSetValue(KEY);
+        Set<String> values = allKindOfBaseCommand.zrange(KEY, 0, -1);
         assertEquals(3, values.size());
 
         assertEquals(Arrays.toString(new String[]{"a", "b", "c"}), Arrays.toString(values.toArray(new String[0])));
@@ -142,7 +139,7 @@ public class AllKindOfBaseCommandTests {
         assertEquals(Arrays.toString(new String[]{"a", "b"}), Arrays.toString(rangeValues.toArray(new String[0])));
 
         allKindOfBaseCommand.zrem(KEY, "a");
-        values = allKindOfBaseCommand.getAllZSetValue(KEY);
+        values = allKindOfBaseCommand.zrange(KEY, 0, -1);
         assertEquals(2, values.size());
 
         allKindOfBaseCommand.zadd(KEY, 40, "d");

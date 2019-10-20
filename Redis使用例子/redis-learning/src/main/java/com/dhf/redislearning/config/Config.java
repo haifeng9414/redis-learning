@@ -1,9 +1,7 @@
 package com.dhf.redislearning.config;
 
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -16,7 +14,6 @@ public class Config {
     }
 
     @Bean
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public Jedis jedis(JedisPool jedisPool) {
         return jedisPool.getResource();
     }
