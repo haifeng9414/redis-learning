@@ -25,6 +25,60 @@ public class AllKindOfBaseCommand {
     }
 
     /*
+    针对字符串、列表、集合、有序集合、散列，对值进行排序，可以按照数字或字母顺序排序，默认按照数字排序，如果元素不能转换为数字则报错
+    如果使用字母顺序排序：new SortingParams().alpha().asc()
+    sort还支持将散列的数据作为权重对数据进行排序，如存在列表：sort-input [7 15 23 110]，如果直接调用sort sort-input命令则返回
+    [7 15 23 110]，现在新建若干散列：
+    hset d-7 field 5
+    hset d-15 field 1
+    hset d-23 field 9
+    hset d-110 field 3
+
+    此时调用sort sort-input by 'd-*->field'将返回[15 110 7 23]，该结果是按照这些分值对应的散列的field域指定的权重排序的，by选项后面
+    的d-*->field由->分成两个部分，d-*用于设置分值对应的散列，field用于设置散列对应的键值对
+    还可以使用get选项设置按权重排序的结果的值，调用sort sort-input by 'd-*->field'将返回[1 3 5 9]，get选项指定了如何获取结果，这里的
+    d-*->field表示结果不再使用分值，而是其对应的权重
+     */
+    public void sort(String key, SortingParams sortingParams, String destKey) {
+        jedis.sort(key, sortingParams, destKey);
+    }
+
+    // 移除key过期时间
+    public Long persist(String key) {
+        return jedis.persist(key);
+    }
+
+    // 查看key还有久过期（秒）
+    public Long ttl(String key) {
+        return jedis.ttl(key);
+    }
+
+    // 查看key还有久过期（毫秒）（Redis2.6以上可用）
+    public Long pttl(String key) {
+        return jedis.pttl(key);
+    }
+
+    // 设置key的过期时间（秒）
+    public Long expire(String key, int seconds) {
+        return jedis.expire(key, seconds);
+    }
+
+    // 设置key的过期时间（毫秒）
+    public Long pexpire(String key, long milliseconds) {
+        return jedis.pexpire(key, milliseconds);
+    }
+
+    // 设置key的过期时间（秒时间戳）
+    public Long expireAt(String key, long unixTimestamp) {
+        return jedis.expireAt(key, unixTimestamp);
+    }
+
+    // 设置key的过期时间（毫秒时间戳）
+    public Long pexpireAt(String key, long milliUnixTimestamp) {
+        return jedis.pexpireAt(key, milliUnixTimestamp);
+    }
+
+    /*
     ----------------------------------------------------------
     string
     ----------------------------------------------------------
@@ -385,6 +439,17 @@ public class AllKindOfBaseCommand {
     /*
     ----------------------------------------------------------
     发布和订阅，jedis的发布和订阅功能和JedisPubSub对象有关联，这里直接放方法不太直观，直接看单测：SubscribeTest
+
+    Redis的发布和订阅有两个比较重要的缺点：
+    第一个和Redis系统的稳定性有关。对于旧版Redis来说，如果一个客户端订阅了某个
+    或某些频道，但它读取消息的速度却不够快的话，那么不断积压的消息就会使得Redis输出缓冲
+    区的体积变得越来越大，这可能会导致Redis的速度变慢，甚至直接崩溃。也可能会导致Redis
+    被操作系统强制杀死，甚至导致操作系统本身不可用。新版的Redis不会出现这种问题，因为它
+    会自动断开不符合 client-output-buffer-limit pubsub 配置选项要求的订阅客户端
+
+    第二个和数据传输的可靠性有关。任何网络系统在执行操作时都可能会遇上断线情况，
+    而断线产生的连接错误通常会使得网络连接两端中的其中一端进行重新连接，如果客户端
+    在执行订阅操作的过程中断线，那么客户端将丢失在断线期间发送的所有消息
     ----------------------------------------------------------
      */
 }
