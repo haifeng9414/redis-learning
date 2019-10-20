@@ -39,6 +39,7 @@ public class SubscribeTest {
         log("Got message: %s", messageContainer.iterator().next());
 
         jedisPubSub.unsubscribe();
+//        jedisPubSub.punsubscribe("test*");
 	}
 
 	private void setupPublisher() {
@@ -75,14 +76,19 @@ public class SubscribeTest {
 
 			@Override
 			public void onPUnsubscribe(String pattern, int subscribedChannels) {
+			    log("onPUnsubscribe:" + pattern);
 			}
 
 			@Override
 			public void onPSubscribe(String pattern, int subscribedChannels) {
-			}
+                log("onPSubscribe:" + pattern);
+            }
 
 			@Override
 			public void onPMessage(String pattern, String channel, String message) {
+                messageContainer.add(message);
+                log("Message received");
+                messageReceivedLatch.countDown();
 			}
 
 			@Override
@@ -96,6 +102,9 @@ public class SubscribeTest {
             try {
                 log("subscribing");
                 jedis.subscribe(jedisPubSub, "test");
+                // 还可以用psubscribe方法传入正则实现订阅多个channel，但是需要注意psubscribe对应的jedisPubSub中的回调方法和消息接收
+                // 接收方法与普通的subscribe方法是分开的，psubscribe方法对应的取消订阅方法是punsubscribe而不是unsubscribe
+                // jedis.psubscribe(jedisPubSub, "tes*");
                 log("subscribe returned, closing down");
                 jedis.quit();
             } catch (Exception e) {
