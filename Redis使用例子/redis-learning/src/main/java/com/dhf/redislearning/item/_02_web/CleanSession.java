@@ -1,7 +1,7 @@
 package com.dhf.redislearning.item._02_web;
 
+import com.dhf.redislearning.item.AllKindOfBaseCommand;
 import org.springframework.stereotype.Service;
-import redis.clients.jedis.Jedis;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -16,14 +16,14 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class CleanSession {
     @Resource
-    private Jedis jedis;
+    private AllKindOfBaseCommand allKindOfBaseCommand;
     // 保存的用户记录数量最大值
     private final static int LIMIT =  1000;
 
     public void cleanSession() throws InterruptedException {
         while (true) {
             // zcard命令返回有序集合中元素的数量，这里获取最近登录的用户数量
-            Long size = jedis.zcard("recent:");
+            Long size = allKindOfBaseCommand.zcard("recent:");
             if (size <= 1000) {
                 TimeUnit.SECONDS.sleep(1);
                 continue;
@@ -31,7 +31,7 @@ public class CleanSession {
 
             // 最多减少到100
             long endIndex = Math.min(100, size - LIMIT);
-            Set<String> tokens = jedis.zrange("tokens", 0, endIndex - 1);
+            Set<String> tokens = allKindOfBaseCommand.zrange("tokens", 0, endIndex - 1);
 
             List<String> deleteTokens = new ArrayList<>();
             for (String token : tokens) {
@@ -41,10 +41,10 @@ public class CleanSession {
                 deleteTokens.add("cart:" + token);
             }
 
-            jedis.del(deleteTokens.toArray(new String[]{}));
+            allKindOfBaseCommand.del(deleteTokens);
             String[] tokenArray = tokens.toArray(new String[]{});
-            jedis.hdel("login:", tokenArray);
-            jedis.zrem("recent:", tokenArray);
+            allKindOfBaseCommand.hdel("login:", tokenArray);
+            allKindOfBaseCommand.zrem("recent:", tokenArray);
         }
     }
 }

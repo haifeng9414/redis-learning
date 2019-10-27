@@ -7,8 +7,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.test.context.junit4.SpringRunner;
-import redis.clients.jedis.Tuple;
 
 import java.util.*;
 
@@ -108,9 +108,9 @@ public class AllKindOfBaseCommandTests {
      */
     @Test
     public void hash() {
-        allKindOfBaseCommand.hset(KEY, Collections.singletonMap("a", "1"));
-        allKindOfBaseCommand.hset(KEY, Collections.singletonMap("b", "2"));
-        allKindOfBaseCommand.hset(KEY, Collections.singletonMap("c", "3"));
+        allKindOfBaseCommand.hset(KEY, "a", "1");
+        allKindOfBaseCommand.hset(KEY, "b", "2");
+        allKindOfBaseCommand.hset(KEY, "c", "3");
         Map<String, String> values = allKindOfBaseCommand.hgetAll(KEY);
         assertEquals(3, values.size());
 
@@ -147,8 +147,8 @@ public class AllKindOfBaseCommandTests {
         Set<String> rangeValuesByScore = allKindOfBaseCommand.zrangeByScore(KEY, 10, 40);
         assertEquals(Arrays.toString(new String[]{"b", "c", "d"}), Arrays.toString(rangeValuesByScore.toArray(new String[0])));
 
-        Set<Tuple> tuples = allKindOfBaseCommand.zrangeWithScores(KEY, 0, -1);
-        double collect = tuples.stream().mapToDouble(Tuple::getScore).sum();
+        Set<ZSetOperations.TypedTuple<String>> tuples = allKindOfBaseCommand.zrangeWithScores(KEY, 0, -1);
+        double collect = tuples.stream().mapToDouble(item -> Optional.ofNullable(item.getScore()).orElse(0.0)).sum();
         // b + c + d + e = 20 + 30 + 40 + 50
         assertEquals(140, (int) collect);
     }

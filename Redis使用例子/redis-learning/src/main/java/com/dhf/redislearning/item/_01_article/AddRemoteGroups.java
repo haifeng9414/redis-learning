@@ -1,7 +1,7 @@
 package com.dhf.redislearning.item._01_article;
 
+import com.dhf.redislearning.item.AllKindOfBaseCommand;
 import org.springframework.stereotype.Service;
-import redis.clients.jedis.Jedis;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -12,21 +12,21 @@ import java.util.List;
 @Service
 public class AddRemoteGroups {
     @Resource
-    private Jedis jedis;
+    private AllKindOfBaseCommand allKindOfBaseCommand;
 
     /**
-     * @param articleId 文章ID
-     * @param addGroups 需要添加文章的群组ID列表
+     * @param articleId    文章ID
+     * @param addGroups    需要添加文章的群组ID列表
      * @param removeGroups 需要移除文章的群组ID列表
      */
     public void addRemoveGroups(String articleId, List<String> addGroups, List<String> removeGroups) {
         String article = "article:" + articleId;
 
         for (String groupId : addGroups) {
-            jedis.sadd("group:" + groupId, article);
+            allKindOfBaseCommand.sadd("group:" + groupId, article);
         }
         for (String groupId : removeGroups) {
-            jedis.srem("group:" + groupId, article);
+            allKindOfBaseCommand.srem("group:" + groupId, article);
         }
     }
 }

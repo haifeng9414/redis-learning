@@ -1,11 +1,11 @@
 package com.dhf.redislearning.item._01_article;
 
+import com.dhf.redislearning.item.AllKindOfBaseCommand;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import redis.clients.jedis.Jedis;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -14,7 +14,7 @@ import java.util.*;
 @SpringBootTest
 public class ArticleTest {
     @Resource
-    private Jedis jedis;
+    private AllKindOfBaseCommand redisClient;
     @Resource
     private PostArticle postArticle;
     @Resource
@@ -28,8 +28,8 @@ public class ArticleTest {
 
     @After
     public void removeAllKeys() {
-        Set<String> keys = jedis.keys("*");
-        jedis.del(keys.toArray(new String[]{}));
+        Set<String> keys = redisClient.keys("*");
+        redisClient.del(keys);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class ArticleTest {
         String articleId = postArticle.postArticle("username", "A title", "http://www.google.com");
         System.out.println("We posted a new article with id: " + articleId);
         System.out.println("Its HASH looks like:");
-        Map<String,String> articleData = jedis.hgetAll("article:" + articleId);
+        Map<String,String> articleData = redisClient.hgetAll("article:" + articleId);
         for (Map.Entry<String,String> entry : articleData.entrySet()){
             System.out.println("  " + entry.getKey() + ": " + entry.getValue());
         }
@@ -45,7 +45,7 @@ public class ArticleTest {
         System.out.println();
 
         articleVote.articleVote("other_user", "article:" + articleId);
-        String votes = jedis.hget("article:" + articleId, "votes");
+        String votes = redisClient.hget("article:" + articleId, "votes");
         System.out.println("We voted for the article, it now has votes: " + votes);
         assert Integer.parseInt(votes) > 1;
 

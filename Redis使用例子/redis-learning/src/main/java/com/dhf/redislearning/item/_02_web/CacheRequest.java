@@ -1,11 +1,11 @@
 package com.dhf.redislearning.item._02_web;
 
+import com.dhf.redislearning.item.AllKindOfBaseCommand;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.params.SetParams;
 
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -14,7 +14,7 @@ import java.util.function.Function;
 @Service
 public class CacheRequest {
     @Resource
-    private Jedis jedis;
+    private AllKindOfBaseCommand allKindOfBaseCommand;
 
     /**
      * 判断请求是否可以被缓存
@@ -36,12 +36,12 @@ public class CacheRequest {
         }
 
         String cacheKey = "cache:" + hashRequest(request);
-        String content = jedis.get(cacheKey);
+        String content = allKindOfBaseCommand.get(cacheKey);
 
         if (StringUtils.isEmpty(content)) {
             content = callback.apply(request);
             // 缓存结果，300秒后过期
-            jedis.set(cacheKey, content, SetParams.setParams().ex(300));
+            allKindOfBaseCommand.set(cacheKey, content, 300, TimeUnit.SECONDS);
         }
 
         return content;
