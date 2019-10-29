@@ -1,11 +1,13 @@
 package com.dhf.redislearning.item._02_web;
 
 import com.dhf.redislearning.item.AllKindOfBaseCommand;
+import io.lettuce.core.ScoredValue;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -30,11 +32,11 @@ public class ScheduleRowCache {
 
     public void cacheRow() throws InterruptedException {
         while (true) {
-            Set<ZSetOperations.TypedTuple<String>> tuples = allKindOfBaseCommand.zrangeWithScores("schedule:", 0, 0);
+            List<ScoredValue<String>> tuples = allKindOfBaseCommand.zrangeWithScores("schedule:", 0, 0);
             long now = System.currentTimeMillis();
 
             // 如果调用列表中最近的一个还没有到达调度时间，则sleep 50ms
-            if (!CollectionUtils.isEmpty(tuples) && Optional.ofNullable(tuples.iterator().next().getScore()).orElse(Double.MAX_VALUE) > now) {
+            if (!CollectionUtils.isEmpty(tuples) && tuples.iterator().next().getScore() > now) {
                 TimeUnit.MILLISECONDS.sleep(50);
                 continue;
             }

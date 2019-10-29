@@ -31,7 +31,7 @@ public class CleanSession {
 
             // 最多减少到100
             long endIndex = Math.min(100, size - LIMIT);
-            Set<String> tokens = allKindOfBaseCommand.zrange("tokens", 0, endIndex - 1);
+            List<String> tokens = allKindOfBaseCommand.zrange("tokens", 0, endIndex - 1);
 
             List<String> deleteTokens = new ArrayList<>();
             for (String token : tokens) {
@@ -41,7 +41,7 @@ public class CleanSession {
                 deleteTokens.add("cart:" + token);
             }
 
-            allKindOfBaseCommand.del(deleteTokens);
+            allKindOfBaseCommand.del(deleteTokens.toArray(new String[0]));
             String[] tokenArray = tokens.toArray(new String[]{});
             allKindOfBaseCommand.hdel("login:", tokenArray);
             allKindOfBaseCommand.zrem("recent:", tokenArray);

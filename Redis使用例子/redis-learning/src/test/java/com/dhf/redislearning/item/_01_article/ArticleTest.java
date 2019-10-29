@@ -28,8 +28,8 @@ public class ArticleTest {
 
     @After
     public void removeAllKeys() {
-        Set<String> keys = redisClient.keys("*");
-        redisClient.del(keys);
+        List<String> keys = redisClient.keys("*");
+        redisClient.del(keys.toArray(new String[0]));
     }
 
     @Test

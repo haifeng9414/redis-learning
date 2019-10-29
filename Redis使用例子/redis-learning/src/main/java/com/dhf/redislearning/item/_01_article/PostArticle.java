@@ -32,7 +32,7 @@ public class PostArticle {
         // 默认发布者已经为文章投票
         allKindOfBaseCommand.sadd(voted, userId);
         // voted集合有效时间为一个星期，一个星期后不能再投票
-        allKindOfBaseCommand.expire(voted, ONE_WEEK_IN_SECOND, TimeUnit.SECONDS);
+        allKindOfBaseCommand.expire(voted, ONE_WEEK_IN_SECOND);
 
         long now = System.currentTimeMillis();
         String article = "article:" + articleId;

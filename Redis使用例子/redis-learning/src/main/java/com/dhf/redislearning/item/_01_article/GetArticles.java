@@ -28,7 +28,7 @@ public class GetArticles {
         int start = (page - 1) * ARTICLE_PER_PAGE;
         int end = start + ARTICLE_PER_PAGE - 1;
 
-        Set<String> ids = allKindOfBaseCommand.zrevrange(order, start, end);
+        List<String> ids = allKindOfBaseCommand.zrevrange(order, start, end);
 
         List<Map<String, String>> result = new ArrayList<>();
         for (String id : ids) {

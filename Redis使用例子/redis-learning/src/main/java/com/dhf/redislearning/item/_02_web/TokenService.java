@@ -1,6 +1,7 @@
 package com.dhf.redislearning.item._02_web;
 
 import com.dhf.redislearning.item.AllKindOfBaseCommand;
+import io.lettuce.core.ZStoreArgs;
 import org.springframework.data.redis.connection.RedisZSetCommands;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -58,7 +59,10 @@ public class TokenService {
             allKindOfBaseCommand.zremrangeByRank("viewed:", 20000, -1);
             // zinterstore方法能够对多个有序集合的交集进行计算（求和、取最大值/最小值），第一个参数为保存结果的key，这里用ZParams
             // 设置viewed:的权重为0.5，即该集合中的值参与计算时数值减半，最后再将结果保存到viewed:，从而实现了将viewed:集合中的所有数值减半的效果
-            allKindOfBaseCommand.zinterstore("viewed:", "viewed:", RedisZSetCommands.Aggregate.SUM, RedisZSetCommands.Weights.of(0.5));
+            final ZStoreArgs weights = ZStoreArgs.Builder
+                    .sum()
+                    .weights(0.5);
+            allKindOfBaseCommand.zinterstore("viewed:", weights, "viewed:");
             // 每5分钟执行一次
             TimeUnit.MINUTES.sleep(5);
         }

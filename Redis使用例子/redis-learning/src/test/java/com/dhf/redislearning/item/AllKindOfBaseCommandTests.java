@@ -1,5 +1,6 @@
 package com.dhf.redislearning.item;
 
+import io.lettuce.core.ScoredValue;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -7,10 +8,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -130,12 +133,12 @@ public class AllKindOfBaseCommandTests {
         allKindOfBaseCommand.zadd(KEY, 10, "a");
         allKindOfBaseCommand.zadd(KEY, 20, "b");
         allKindOfBaseCommand.zadd(KEY, 30, "c");
-        Set<String> values = allKindOfBaseCommand.zrange(KEY, 0, -1);
+        List<String> values = allKindOfBaseCommand.zrange(KEY, 0, -1);
         assertEquals(3, values.size());
 
         assertEquals(Arrays.toString(new String[]{"a", "b", "c"}), Arrays.toString(values.toArray(new String[0])));
 
-        Set<String> rangeValues = allKindOfBaseCommand.zrange(KEY, 0, 1);
+        List<String> rangeValues = allKindOfBaseCommand.zrange(KEY, 0, 1);
         assertEquals(Arrays.toString(new String[]{"a", "b"}), Arrays.toString(rangeValues.toArray(new String[0])));
 
         allKindOfBaseCommand.zrem(KEY, "a");
@@ -144,11 +147,11 @@ public class AllKindOfBaseCommandTests {
 
         allKindOfBaseCommand.zadd(KEY, 40, "d");
         allKindOfBaseCommand.zadd(KEY, 50, "e");
-        Set<String> rangeValuesByScore = allKindOfBaseCommand.zrangeByScore(KEY, 10, 40);
+        List<String> rangeValuesByScore = allKindOfBaseCommand.zrangeByScore(KEY, 10, 40);
         assertEquals(Arrays.toString(new String[]{"b", "c", "d"}), Arrays.toString(rangeValuesByScore.toArray(new String[0])));
 
-        Set<ZSetOperations.TypedTuple<String>> tuples = allKindOfBaseCommand.zrangeWithScores(KEY, 0, -1);
-        double collect = tuples.stream().mapToDouble(item -> Optional.ofNullable(item.getScore()).orElse(0.0)).sum();
+        List<ScoredValue<String>> tuples = allKindOfBaseCommand.zrangeWithScores(KEY, 0, -1);
+        double collect = tuples.stream().mapToDouble(ScoredValue::getScore).sum();
         // b + c + d + e = 20 + 30 + 40 + 50
         assertEquals(140, (int) collect);
     }

@@ -1,6 +1,7 @@
 package com.dhf.redislearning.item._01_article;
 
 import com.dhf.redislearning.item.AllKindOfBaseCommand;
+import io.lettuce.core.ZStoreArgs;
 import org.springframework.data.redis.connection.RedisZSetCommands;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +32,9 @@ public class GetGroupArticles {
         if (!allKindOfBaseCommand.exists(key)) {
             // zinterstore命令接受多个有序集合或者集合（普通集合的数值为1），取这些集合的交集并按照指定的条件排序，并将结果保存到第一个参数
             // 指定的key中，这里传入集合group和有序集合order，相当于取存在于群组group中的文章，并按照order集合中的数值从大到小排序
-            allKindOfBaseCommand.zinterstore("group:" + group, key, RedisZSetCommands.Aggregate.MAX, order);
+            allKindOfBaseCommand.zinterstore("group:" + group, ZStoreArgs.Builder.max(), key, order);
             // 如果集合过大，则zinterstore命令会比较长的时间计算结果，这里将zinterstore命令的结果缓存60秒
-            allKindOfBaseCommand.expire(key, 60, TimeUnit.SECONDS);
+            allKindOfBaseCommand.expire(key, 60);
         }
 
         // 取结果的指定页的文章，这里以key作为获取文章的排序条件，key保存了群组中的文章按照order排序后的结果

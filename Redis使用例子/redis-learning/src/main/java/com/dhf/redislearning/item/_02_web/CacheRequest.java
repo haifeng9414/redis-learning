@@ -41,7 +41,7 @@ public class CacheRequest {
         if (StringUtils.isEmpty(content)) {
             content = callback.apply(request);
             // 缓存结果，300秒后过期
-            allKindOfBaseCommand.set(cacheKey, content, 300, TimeUnit.SECONDS);
+            allKindOfBaseCommand.set(cacheKey, content, 300);
         }
 
         return content;
