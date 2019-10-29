@@ -3,25 +3,19 @@ package com.dhf.redislearning.item;
 import io.lettuce.core.*;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
-import io.lettuce.core.protocol.CommandArgs;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.RedisStringCommands;
-import org.springframework.data.redis.connection.RedisZSetCommands;
-import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.ZSetOperations;
-import org.springframework.data.redis.core.query.SortQuery;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 @SuppressWarnings("WeakerAccess")
 public class AllKindOfBaseCommand {
     private RedisCommands<String, String> redisCommands;
-    
+
     @Autowired
     private void setRedisCommands(StatefulRedisConnection<String, String> singleRedisConnection) {
         this.redisCommands = singleRedisConnection.sync();
@@ -132,7 +126,7 @@ public class AllKindOfBaseCommand {
     public void set(String key, String value, long timeout) {
         final SetArgs ex = SetArgs.Builder
                 .ex(timeout);
-        
+
         redisCommands.set(key, value, ex);
     }
 
