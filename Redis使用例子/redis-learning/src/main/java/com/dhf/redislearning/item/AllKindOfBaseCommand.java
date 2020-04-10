@@ -201,11 +201,14 @@ public class AllKindOfBaseCommand {
     ----------------------------------------------------------
      */
     // 返回链表的长度
+    public Long llen(String key) {
+        return redisCommands.llen(key);
+    }
+
     public Long lpush(String key, String... values) {
         return redisCommands.lpush(key, values);
     }
 
-    // 返回链表的长度
     public Long rpush(String key, String... values) {
         return redisCommands.rpush(key, values);
     }
@@ -228,7 +231,7 @@ public class AllKindOfBaseCommand {
         return redisCommands.lrange(key, start, end);
     }
 
-    // 对列表进行修剪，只保留从start偏移量到end偏移量范围内的元素，，包括start和end
+    // 对列表进行修剪，只保留从start偏移量到end偏移量范围内的元素，包括start和end
     public void ltrim(String key, long start, long end) {
         redisCommands.ltrim(key, start, end);
     }
